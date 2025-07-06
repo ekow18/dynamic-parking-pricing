@@ -1,97 +1,167 @@
-# dynamic-parking-pricing
-# Dynamic Pricing for Urban Parking Lots  
-**Summer Analytics 2025 – Capstone Project**  
-**By:** Titus Yankson  
+# 🚗 Dynamic Pricing for Urban Parking Lots
+
+**Summer Analytics 2025 – Capstone Project**
+**By:** Titus Yankson
 **Hosted by:** Consulting & Analytics Club × Pathway
 
 ---
 
 ## 🧾 Overview
 
-This project tackles inefficiencies in urban parking systems by implementing a real-time dynamic pricing engine. Using a simulated data stream of parking lot metrics (occupancy, queue, traffic, etc.), three intelligent pricing models were built:
+This project addresses inefficiencies in static parking pricing by implementing a real-time dynamic pricing engine for urban lots. Using data from 14 parking spaces over 73 days, we simulate intelligent price adjustments based on occupancy, traffic, vehicle type, and proximity to competitors — all in real time using the Pathway platform.
 
-1. **Model 1:** Baseline linear pricing  
-2. **Model 2:** Demand-based pricing using multiple real-time signals  
-3. **Model 3:** Competitive pricing using geo-proximity and rerouting logic
+We developed three models of increasing intelligence:
+
+1. **Model 1:** Linear pricing based on occupancy
+2. **Model 2:** Weighted demand-based pricing
+3. **Model 3:** Competitive pricing with rerouting logic based on nearby lot conditions
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Component     | Tool |
-|---------------|------|
-| Language      | Python (3.11+)  
-| Libraries     | `pandas`, `numpy`, `pathway`, `bokeh`  
-| Platform      | Google Colab  
-| Visualization | Bokeh  
-| Data Format   | CSV, JSONL  
+| Component     | Tool                          |
+| ------------- | ----------------------------- |
+| Language      | Python (3.11+)                |
+| Libraries     | pandas, numpy, pathway, bokeh |
+| Platform      | Google Colab                  |
+| Visualization | Bokeh                         |
+| Data Format   | CSV, JSONL                    |
 
 ---
 
 ## 🏗 Architecture Diagram
 
+You may add a diagram using Mermaid (optional), or upload a `.png` version.
+Example (in Mermaid syntax if using markdown viewer):
+
+```
 flowchart TD
-    A[Input Dataset (CSV)]
-    B[Pathway Stream]
-    C[Model 1: Baseline Pricing]
-    D[Model 2: Demand-Based Pricing]
-    E[Model 3: Competitive Pricing + Rerouting]
-    F[Pathway JSONL Output]
-    G[Bokeh Dashboard]
+    A[CSV: dataset.csv] --> B[Pathway Ingestion]
+    B --> C[Model 1: Baseline]
+    B --> D[Model 2: Demand-Based]
+    B --> E[Model 3: Competitive Pricing]
+    C --> F[Final Output (JSONL)]
+    D --> F
+    E --> F --> G[Bokeh Real-Time Visualization]
+```
 
-    A --> B --> C --> F --> G
-    B --> D --> F
-    B --> E --> F
+---
 
+## 📂 Repository Contents
 
-    📦 Repository Contents
-File/Folder	Description
-final_notebook.ipynb	Contains all 3 pricing models and Pathway integration
-data/dataset.csv	Main input dataset for the models
-output/bokeh_plot.png	Screenshot of real-time Bokeh visualization
-requirements.txt	Python dependencies
-capstone_report.pdf	(Optional) Report with summary & explanation
-README.md	This file
+| File/Folder             | Description                                               |
+| ----------------------- | --------------------------------------------------------- |
+| `final_notebook.ipynb`  | Single notebook implementing Models 1–3 and visualization |
+| `data/dataset.csv`      | Raw dataset of 14 parking lots                            |
+| `output/bokeh_plot.png` | Screenshot of real-time Bokeh chart                       |
+| `requirements.txt`      | Python dependencies                                       |
+| `capstone_report.pdf`   | (Optional) Final project report                           |
+| `README.md`             | Project overview (this file)                              |
 
-Project Workflow
-Load & clean dataset (dataset.csv)
-Implement:
-    Model 1: Price = base + α × (occupancy / capacity).
-    Model 2: Weighted demand score → normalized → dynamic price.
-    Model 3: Add competitor proximity + reroute logic.
-Stream pricing data in real-time with Pathway.
-Plot prices dynamically using Bokeh.
+---
 
-Visualization
-The bokeh_plot.png shows real-time dynamic pricing over time for top 5 busiest lots.
-    Line charts for each lot
-    Tooltip shows time, price, and reroute flag
-    Interactive legend for filtering
+## 🔁 Project Workflow
 
-If included, the report (Dynamic Pricing for Urban Parking Lots.pdf) covers:
-    Project motivation & problem
-    Data structure
-    Demand formula & reasoning
-    Competitive pricing logic
-    Sample outputs and findings
+1. Load and explore the dataset
+2. Build models:
 
-# Install dependencies
-pip install -r requirements.txt
+   * Model 1: Linear price based on occupancy ratio
+   * Model 2: Weighted demand score (traffic, queue, vehicle type) → normalized
+   * Model 3: Add Haversine distance logic for competitor influence and rerouting
+3. Simulate real-time data with Pathway
+4. Output results to JSONL
+5. Visualize with Bokeh
 
-Submission Status
-     Models 1, 2, 3 implemented in one notebook.
-     Real-time data simulation using Pathway.
-     Bokeh dashboard included.
-     Report PDF attached.
-     Repository is public and well-documented.
+---
 
-Access:
-This repository is public and ready for evaluation.
-All assets are self-contained — no additional setup needed.
+## 🧠 Demand Function
 
-🙌 Acknowledgments
-Consulting & Analytics Club, IITG.
-Pathway Engineering Team.
-All mentors & peers in Summer Analytics 2025.
+The demand score is calculated as:
 
-Made with 💡 and 🧠 by Titus Yankson
+Demand = α · (Occupancy / Capacity) + β · QueueLength + γ · TrafficLevel + δ · SpecialDay + ε · VehicleTypeWeight
+
+Prices are then computed as:
+
+Price = BasePrice · (1 + λ · NormalizedDemand)
+
+Prices are bounded between `$5.00` and `$20.00` to avoid erratic jumps.
+
+---
+
+## 🔍 Rerouting Logic (Model 3)
+
+* Compute distances between parking lots using the Haversine formula
+* If a lot is 95% full and nearby lots are cheaper and available → set `reroute = 1` and lower the price
+* Otherwise, adjust price up or down based on competitor pricing
+
+---
+
+## 📊 Bokeh Visualization
+
+We plotted `final_price` vs `time` for top 5 lots using interactive Bokeh plots.
+The chart includes:
+
+* Hover tool showing lot ID, timestamp, final price, reroute flag
+* Toggleable legend
+* Real-time trends that show the system's responsiveness
+
+You can find the screenshot in:
+`output/bokeh_plot.png`
+
+---
+
+## 📄 Report (Optional)
+
+See `capstone_report.pdf` for:
+
+* Project motivation
+* Dataset structure
+* Full demand function explanation
+* Screenshots & analysis
+* Summary of rerouting impact and pricing stability
+
+---
+
+## 🛠 Setup Instructions
+
+To install dependencies:
+
+```
+pip install pandas numpy bokeh pathway
+```
+
+Run the notebook:
+
+* Open `final_notebook.ipynb` in Google Colab
+* Upload `dataset.csv` in the `/data` folder
+* Run all cells in order
+
+---
+
+## ✅ Submission Summary
+
+| Item                         | Status                            |
+| ---------------------------- | --------------------------------- |
+| Model 1: Linear pricing      | ✅ Implemented                     |
+| Model 2: Demand-based        | ✅ Normalized demand score         |
+| Model 3: Competitive pricing | ✅ With rerouting                  |
+| Real-time simulation         | ✅ Done via Pathway                |
+| Visualization                | ✅ Bokeh + PNG output              |
+| Documentation                | ✅ This README + Report (optional) |
+| Repo Access                  | ✅ Public                          |
+
+---
+
+## 🙌 Acknowledgements
+
+* Consulting & Analytics Club, IIT Guwahati
+* Pathway AI – for real-time infrastructure
+* Summer Analytics Mentors & Peers – for support and review
+
+---
+
+**Made with 🧠, ☕, and 🕓 by Titus Yankson – Summer Analytics 2025**
+
+---
+
