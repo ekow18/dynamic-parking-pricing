@@ -111,7 +111,7 @@ You can find the screenshot in:
 
 ---
 
-## 📄 Report (Optional)
+## 📄 Report
 
 See `capstone_report.pdf` for:
 
