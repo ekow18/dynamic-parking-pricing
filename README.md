@@ -30,7 +30,6 @@ This project tackles inefficiencies in urban parking systems by implementing a r
 
 ## 🏗 Architecture Diagram
 
-```mermaid
 flowchart TD
     A[Input Dataset (CSV)]
     B[Pathway Stream]
